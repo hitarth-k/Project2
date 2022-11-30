@@ -10,14 +10,7 @@ import CoreLocation
 
 class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
 
-    @IBOutlet var temp: UILabel!
     @IBOutlet var searchTextField: UITextField!
-    @IBOutlet var locationLable: UILabel!
-    @IBOutlet var changer: UISegmentedControl!
-    @IBOutlet var image: UIImageView!
-    @IBOutlet var condition: UILabel!
-    var celcius = ""
-    var faren = ""
     let locationManager = CLLocationManager()
     
     override func viewDidLoad() {
@@ -25,29 +18,11 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         // Do any additional setup after loading the view.
         searchTextField.delegate = self
         locationManager.delegate = self
-        let colorTop =  UIColor(red: 255.0/255.0, green: 149.0/255.0, blue: 0.0/255.0, alpha: 1.0).cgColor
-        let colorBottom = UIColor(red: 255.0/255.0, green: 94.0/255.0, blue: 58.0/255.0, alpha: 1.0).cgColor
-                    
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [colorTop, colorBottom]
-        gradientLayer.locations = [0.0, 1.0]
-        gradientLayer.frame = self.view.bounds
-                
-        self.view.layer.insertSublayer(gradientLayer, at:0)
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.endEditing(true)
         loadWeather(search: searchTextField.text)
         return true
-    }
-
-    @IBAction func segmentedControl(_ sender: UISegmentedControl) {
-        if (sender.selectedSegmentIndex == 0){
-            temp.text = celcius
-        }
-        else{
-            temp.text = faren
-        }
     }
     
     @IBAction func onSearchTapped(_ sender: UIButton) {
@@ -81,36 +56,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                 print(WeatherRes.location.name)
                 print(WeatherRes.current.temp_c)
                 DispatchQueue.main.async {
-                    let config = UIImage.SymbolConfiguration(paletteColors: [.systemBlue, .white])
-                    self.image.preferredSymbolConfiguration = config
-                    self.celcius = "\(WeatherRes.current.temp_c)°C"
-                    self.faren = "\(WeatherRes.current.temp_f)°F"
-                    self.locationLable.text = WeatherRes.location.name
-                    self.condition.text = WeatherRes.current.condition.text
-                    if (self.changer.selectedSegmentIndex == 0){
-                        self.temp.text = "\(WeatherRes.current.temp_c)°C"
-                    }
-                    else if (self.changer.selectedSegmentIndex == 1){
-                        self.temp.text = "\(WeatherRes.current.temp_f)°F"
-                    }
-                    else{
-                        self.temp.text = "\(WeatherRes.current.temp_c)°C"
-                    }
-                    if(WeatherRes.current.condition.code == 1000){
-                        self.image.image = UIImage(systemName: "sun.max.circle.fill")
-                    }
-                    else if(WeatherRes.current.condition.code == 1066 || WeatherRes.current.condition.code == 1114 || WeatherRes.current.condition.code == 1213 || WeatherRes.current.condition.code == 1210 || WeatherRes.current.condition.code == 1216 || WeatherRes.current.condition.code == 1219 || WeatherRes.current.condition.code == 1225){
-                        self.image.image = UIImage(systemName: "snowflake.circle.fill")
-                    }
-                    else if(WeatherRes.current.condition.code == 1192 || WeatherRes.current.condition.code == 1195 || WeatherRes.current.condition.code == 1198 || WeatherRes.current.condition.code == 1201 || WeatherRes.current.condition.code == 1240 || WeatherRes.current.condition.code == 1243 || WeatherRes.current.condition.code == 1183 ){
-                        self.image.image = UIImage(systemName: "cloud.rain.fill")
-                    }
-                    else if(WeatherRes.current.condition.code == 1003 || WeatherRes.current.condition.code == 1006){
-                        self.image.image = UIImage(systemName: "cloud.circle")
-                    }
-                    else{
-                        self.image.image = UIImage(systemName: "cloud.sun.rain.fill")
-                    }
+                    
                 }
             }
         }
