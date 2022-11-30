@@ -7,18 +7,34 @@
 
 import UIKit
 import CoreLocation
+import MapKit
 
 class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
 
     @IBOutlet var searchTextField: UITextField!
+    @IBOutlet var mapView: MKMapView!
+    
     let locationManager = CLLocationManager()
+    var lat = 0.0
+    var long = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         searchTextField.delegate = self
         locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+        
     }
+    func setupMap() {
+        let location = CLLocation(latitude: lat, longitude: long)
+        let radiusInMeters: CLLocationDistance = 50000
+        let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: radiusInMeters, longitudinalMeters: radiusInMeters)
+        mapView.setRegion(region, animated: true)
+        print(lat,long)
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.endEditing(true)
         loadWeather(search: searchTextField.text)
@@ -56,7 +72,9 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                 print(WeatherRes.location.name)
                 print(WeatherRes.current.temp_c)
                 DispatchQueue.main.async {
-                    
+                    self.lat = WeatherRes.location.lat
+                    self.long = WeatherRes.location.lon
+                    self.setupMap()
                 }
             }
         }
@@ -84,6 +102,8 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     }
     struct Location: Decodable{
         let name: String
+        let lat: Double
+        let lon: Double
     }
     struct Currunt: Decodable{
         let temp_c: Float
@@ -97,7 +117,10 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last{
             let coordinates = "\(location.coordinate.latitude),\(location.coordinate.longitude)"
+            lat = location.coordinate.latitude
+            long = location.coordinate.longitude
             loadWeather(search: coordinates)
+            setupMap()
         }
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
