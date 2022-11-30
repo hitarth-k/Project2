@@ -29,10 +29,13 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     }
     func setupMap() {
         let location = CLLocation(latitude: lat, longitude: long)
-        let radiusInMeters: CLLocationDistance = 50000
+        let radiusInMeters: CLLocationDistance = 40000
         let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: radiusInMeters, longitudinalMeters: radiusInMeters)
         mapView.setRegion(region, animated: true)
-        print(lat,long)
+        let boundry = MKMapView.CameraBoundary(coordinateRegion: region)
+        mapView.setCameraBoundary(boundry, animated: true)
+        let zoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 230000)
+        mapView.setCameraZoomRange(zoomRange ,animated: true)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
