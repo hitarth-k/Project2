@@ -25,17 +25,23 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
-        
+        addAnnotation(location: CLLocation(latitude: lat, longitude: long))
     }
+    
     func setupMap() {
         let location = CLLocation(latitude: lat, longitude: long)
-        let radiusInMeters: CLLocationDistance = 40000
+        let radiusInMeters: CLLocationDistance = 10000
         let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: radiusInMeters, longitudinalMeters: radiusInMeters)
         mapView.setRegion(region, animated: true)
         let boundry = MKMapView.CameraBoundary(coordinateRegion: region)
         mapView.setCameraBoundary(boundry, animated: true)
-        let zoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 230000)
+        let zoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 50000)
         mapView.setCameraZoomRange(zoomRange ,animated: true)
+    }
+    func addAnnotation(location: CLLocation){
+        let coordinate2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        let annotation = MyAnnotation(coordinate: location.coordinate)
+        mapView.addAnnotation(annotation)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -78,6 +84,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                     self.lat = WeatherRes.location.lat
                     self.long = WeatherRes.location.lon
                     self.setupMap()
+                    self.addAnnotation(location: CLLocation(latitude: WeatherRes.location.lat, longitude: WeatherRes.location.lon))
                 }
             }
         }
@@ -127,6 +134,15 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         }
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+    }
+    
+    class MyAnnotation: NSObject,MKAnnotation {
+        var coordinate: CLLocationCoordinate2D
         
+        init(coordinate: CLLocationCoordinate2D) {
+            self.coordinate = coordinate
+            super.init()
+        }
     }
 }
