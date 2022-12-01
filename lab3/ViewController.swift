@@ -9,14 +9,18 @@ import UIKit
 import CoreLocation
 import MapKit
 
-class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
+class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, MKMapViewDelegate {
 
     @IBOutlet var searchTextField: UITextField!
     @IBOutlet var mapView: MKMapView!
+    @IBOutlet var searchStack: UIStackView!
     
     let locationManager = CLLocationManager()
     var lat = 0.0
     var long = 0.0
+    var weatherCondition = ""
+    var desc = ""
+    var temp: Float = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +33,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     }
     
     func setupMap() {
+        mapView.delegate = self
         let location = CLLocation(latitude: lat, longitude: long)
         let radiusInMeters: CLLocationDistance = 10000
         let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: radiusInMeters, longitudinalMeters: radiusInMeters)
@@ -38,9 +43,38 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         let zoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 50000)
         mapView.setCameraZoomRange(zoomRange ,animated: true)
     }
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        let identifier = "WIT"
+        let view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+        view.canShowCallout = true
+        view.calloutOffset = CGPoint(x: 0.0, y: 10.0)
+        let button = UIButton(type: .detailDisclosure)
+        view.rightCalloutAccessoryView = button
+        view.glyphText = "\(temp)"
+        if(temp < 0){
+            view.markerTintColor = UIColor.purple
+        }
+        else if(temp >= 0 && temp <= 11){
+            view.markerTintColor = UIColor.blue
+        }
+        else if(temp > 11 && temp <= 16 ){
+            view.markerTintColor = UIColor.systemBlue
+        }
+        else if(temp > 16 && temp <= 24 ){
+            view.markerTintColor = UIColor.orange
+        }
+        else if(temp > 24 && temp <= 30 ){
+            view.markerTintColor = UIColor.systemRed
+        }
+        else if(temp > 34){
+            view.markerTintColor = UIColor.red
+        }
+        return view
+    }
+    
     func addAnnotation(location: CLLocation){
         let coordinate2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        let annotation = MyAnnotation(coordinate: location.coordinate)
+        let annotation = MyAnnotation(coordinate: location.coordinate, title: weatherCondition, subtitle: desc)
         mapView.addAnnotation(annotation)
     }
     
@@ -81,8 +115,11 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                 print(WeatherRes.location.name)
                 print(WeatherRes.current.temp_c)
                 DispatchQueue.main.async {
+                    self.temp = WeatherRes.current.temp_c
                     self.lat = WeatherRes.location.lat
                     self.long = WeatherRes.location.lon
+                    self.weatherCondition = WeatherRes.current.condition.text
+                    self.desc = "Tempreture :: \(WeatherRes.current.temp_c)°C  Feels like :: \(WeatherRes.current.feelslike_c)°C"
                     self.setupMap()
                     self.addAnnotation(location: CLLocation(latitude: WeatherRes.location.lat, longitude: WeatherRes.location.lon))
                 }
@@ -118,6 +155,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     struct Currunt: Decodable{
         let temp_c: Float
         let temp_f: Float
+        let feelslike_c: Float
         let condition: Condition
     }
     struct Condition: Decodable{
@@ -139,9 +177,12 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     class MyAnnotation: NSObject,MKAnnotation {
         var coordinate: CLLocationCoordinate2D
-        
-        init(coordinate: CLLocationCoordinate2D) {
+        var title: String?
+        var subtitle: String?
+        init(coordinate: CLLocationCoordinate2D, title: String, subtitle: String) {
             self.coordinate = coordinate
+            self.title = title
+            self.subtitle = subtitle
             super.init()
         }
     }

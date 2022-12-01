@@ -18,11 +18,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LLU-WQ-1f8">
+                                <rect key="frame" x="0.0" y="94" width="393" height="435"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="435" id="w8d-jN-acm"/>
+                                </constraints>
+                                <standardMapConfiguration key="preferredConfiguration"/>
+                            </mapView>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="p9Y-8M-09L">
-                                <rect key="frame" x="36" y="59" width="329.33333333333331" height="34.333333333333343"/>
+                                <rect key="frame" x="36" y="59.000000000000007" width="321" height="27.333333333333336"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2bY-AW-aQI">
-                                        <rect key="frame" x="0.0" y="0.0" width="49.333333333333336" height="34.333333333333336"/>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2bY-AW-aQI">
+                                        <rect key="frame" x="0.0" y="0.0" width="41" height="27.333333333333332"/>
                                         <color key="backgroundColor" systemColor="systemBlueColor"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Button"/>
@@ -31,13 +38,13 @@
                                             <action selector="curruntLocation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tZp-zw-aEx"/>
                                         </connections>
                                     </button>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Please enter location here" textAlignment="center" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="rE4-1X-hbv">
-                                        <rect key="frame" x="69.333333333333329" y="0.0" width="195.66666666666669" height="34.333333333333336"/>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Please enter location here" textAlignment="center" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="rE4-1X-hbv">
+                                        <rect key="frame" x="60.999999999999986" y="0.0" width="195.66666666666663" height="27.333333333333332"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" returnKeyType="search"/>
                                     </textField>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LV2-CQ-8DC">
-                                        <rect key="frame" x="285" y="0.0" width="44.333333333333314" height="34.333333333333336"/>
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LV2-CQ-8DC">
+                                        <rect key="frame" x="276.66666666666669" y="0.0" width="44.333333333333314" height="27.333333333333332"/>
                                         <color key="backgroundColor" systemColor="linkColor"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <buttonConfiguration key="configuration" style="tinted">
@@ -49,26 +56,24 @@
                                     </button>
                                 </subviews>
                             </stackView>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LLU-WQ-1f8">
-                                <rect key="frame" x="0.0" y="101" width="393" height="403"/>
-                                <standardMapConfiguration key="preferredConfiguration"/>
-                            </mapView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="LLU-WQ-1f8" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="6jp-1o-mAj"/>
                             <constraint firstItem="p9Y-8M-09L" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9Nz-Ot-afQ"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="LLU-WQ-1f8" secondAttribute="trailing" id="DZA-H5-gu7"/>
-                            <constraint firstItem="LLU-WQ-1f8" firstAttribute="top" secondItem="p9Y-8M-09L" secondAttribute="bottom" constant="32.666666666666657" id="Q21-IT-4Nm"/>
+                            <constraint firstAttribute="trailing" secondItem="LLU-WQ-1f8" secondAttribute="trailing" id="CxV-Mz-1l9"/>
+                            <constraint firstItem="LLU-WQ-1f8" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="HRM-n6-eNB"/>
+                            <constraint firstItem="LLU-WQ-1f8" firstAttribute="centerX" secondItem="p9Y-8M-09L" secondAttribute="centerX" id="QMw-pc-Pqb"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="p9Y-8M-09L" secondAttribute="trailing" id="Si9-xk-QWZ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="LLU-WQ-1f8" secondAttribute="bottom" constant="289" id="YVC-MA-nH3"/>
                             <constraint firstItem="p9Y-8M-09L" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="jW8-0H-7lH"/>
                             <constraint firstItem="p9Y-8M-09L" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="36" id="nB3-9G-cBW"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="LLU-WQ-1f8" secondAttribute="bottom" constant="289" id="tZo-yz-9CH"/>
+                            <constraint firstItem="LLU-WQ-1f8" firstAttribute="top" secondItem="p9Y-8M-09L" secondAttribute="bottom" constant="7.6666666666666572" id="uY7-E8-CT7"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="mapView" destination="LLU-WQ-1f8" id="sSz-Cp-xyw"/>
+                        <outlet property="searchStack" destination="p9Y-8M-09L" id="iCb-zP-TJd"/>
                         <outlet property="searchTextField" destination="rE4-1X-hbv" id="sfa-jw-57t"/>
                     </connections>
                 </viewController>
