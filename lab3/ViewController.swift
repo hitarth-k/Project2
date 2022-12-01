@@ -25,7 +25,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     var desc = ""
     var temp: Float = 0
     var list: [weatherList] = []
-    var forec = [Forecast]()
+    var loc = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,6 +94,14 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
        //Open Detais screen (use the psudo code from notes)
+        performSegue(withIdentifier: "goToDetail", sender: self)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToDetail" {
+            guard let vc = segue.destination as? Detail else {return}
+//            vc.test.text = weatherConditio
+            vc.loc = loc
+        }
     }
     
     func addAnnotation(location: CLLocation){
@@ -108,6 +116,9 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         return true
     }
     
+    @IBAction func addList(_ sender: UIBarButtonItem) {
+        
+    }
     
     @IBAction func onSearchTapped(_ sender: UIButton) {
         loadWeather(search: searchTextField.text)
@@ -140,6 +151,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                 print(WeatherRes.location.name)
                 print(WeatherRes.current.temp_c)
                 DispatchQueue.main.async {
+                    self.loc = "\(WeatherRes.location.name)"
                     self.temp = WeatherRes.current.temp_c
                     self.lat = WeatherRes.location.lat
                     self.long = WeatherRes.location.lon
@@ -147,7 +159,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                     self.desc = "Tempreture :: \(WeatherRes.current.temp_c)°C  Feels like :: \(WeatherRes.current.feelslike_c)°C"
                     self.setupMap()
                     self.addAnnotation(location: CLLocation(latitude: WeatherRes.location.lat, longitude: WeatherRes.location.lon))
-                    let item = weatherList(title: "\(WeatherRes.location.name), \(WeatherRes.location.region)", subtitle: "\(WeatherRes.current.temp_c),\(WeatherRes.forecast.forecastday)")
+                    let item = weatherList(title: "\(WeatherRes.location.name), \(WeatherRes.location.region)", subtitle: "Currunt:: \(WeatherRes.current.temp_c)(H:: \(WeatherRes.forecast.forecastday[0].day.maxtemp_c), L: \(WeatherRes.forecast.forecastday[0].day.mintemp_c))")
                     if (WeatherRes.location.name != ""){
                         self.list.append(item)
                         self.tableView.reloadData()
@@ -158,7 +170,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         dataTask.resume()
     }
    private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=ee31407e0be240f7b94130719221811&q=\(query)&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=ee31407e0be240f7b94130719221811&q=\(query)&days=7&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)
