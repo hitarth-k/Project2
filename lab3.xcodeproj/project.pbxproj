@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BC303B3B2938FD810059DCD0 /* AddListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC303B3A2938FD810059DCD0 /* AddListVC.swift */; };
 		BC3D842D2926814500F1D082 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3D842C2926814500F1D082 /* AppDelegate.swift */; };
 		BC3D842F2926814500F1D082 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3D842E2926814500F1D082 /* SceneDelegate.swift */; };
 		BC3D84312926814500F1D082 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3D84302926814500F1D082 /* ViewController.swift */; };
@@ -22,6 +23,7 @@
 		BC2D569F292BE1880017A0C3 /* CoreLocationUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocationUI.framework; path = System/Library/Frameworks/CoreLocationUI.framework; sourceTree = SDKROOT; };
 		BC2D56A0292BE1890017A0C3 /* LocalAuthenticationEmbeddedUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthenticationEmbeddedUI.framework; path = System/Library/Frameworks/LocalAuthenticationEmbeddedUI.framework; sourceTree = SDKROOT; };
 		BC2D56A1292BE1890017A0C3 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
+		BC303B3A2938FD810059DCD0 /* AddListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListVC.swift; sourceTree = "<group>"; };
 		BC3D84292926814500F1D082 /* lab3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lab3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC3D842C2926814500F1D082 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BC3D842E2926814500F1D082 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				BC3D842E2926814500F1D082 /* SceneDelegate.swift */,
 				BC3D84302926814500F1D082 /* ViewController.swift */,
 				BC3D84322926814500F1D082 /* Main.storyboard */,
+				BC303B3A2938FD810059DCD0 /* AddListVC.swift */,
 				BC3D84352926814600F1D082 /* Assets.xcassets */,
 				BC3D84372926814600F1D082 /* LaunchScreen.storyboard */,
 				BC3D843A2926814600F1D082 /* Info.plist */,
@@ -158,6 +161,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC303B3B2938FD810059DCD0 /* AddListVC.swift in Sources */,
 				BC3D84312926814500F1D082 /* ViewController.swift in Sources */,
 				BC3D842D2926814500F1D082 /* AppDelegate.swift in Sources */,
 				BC3D842F2926814500F1D082 /* SceneDelegate.swift in Sources */,

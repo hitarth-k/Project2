@@ -9,11 +9,14 @@ import UIKit
 import CoreLocation
 import MapKit
 
-class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, MKMapViewDelegate {
+class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, MKMapViewDelegate, UITableViewDataSource {
+
+    
 
     @IBOutlet var searchTextField: UITextField!
     @IBOutlet var mapView: MKMapView!
     @IBOutlet var searchStack: UIStackView!
+    @IBOutlet var tableView: UITableView!
     
     let locationManager = CLLocationManager()
     var lat = 0.0
@@ -21,6 +24,8 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     var weatherCondition = ""
     var desc = ""
     var temp: Float = 0
+    var list: [weatherList] = []
+    var forec = [Forecast]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +35,20 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         addAnnotation(location: CLLocation(latitude: lat, longitude: long))
+        tableView.dataSource = self
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return list.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "weatherCell", for: indexPath)
+        let item = list[indexPath.row]
+        var content = cell.defaultContentConfiguration()
+        content.text = item.title
+        content.secondaryText = item.subtitle
+        cell.contentConfiguration = content
+        return cell
     }
     
     func setupMap() {
@@ -49,6 +68,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         view.canShowCallout = true
         view.calloutOffset = CGPoint(x: 0.0, y: 10.0)
         let button = UIButton(type: .detailDisclosure)
+        button.tag = 10
         view.rightCalloutAccessoryView = button
         view.glyphText = "\(temp)"
         if(temp < 0){
@@ -72,6 +92,10 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         return view
     }
     
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+       //Open Detais screen (use the psudo code from notes)
+    }
+    
     func addAnnotation(location: CLLocation){
         let coordinate2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         let annotation = MyAnnotation(coordinate: location.coordinate, title: weatherCondition, subtitle: desc)
@@ -83,6 +107,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         loadWeather(search: searchTextField.text)
         return true
     }
+    
     
     @IBAction func onSearchTapped(_ sender: UIButton) {
         loadWeather(search: searchTextField.text)
@@ -122,13 +147,18 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                     self.desc = "Tempreture :: \(WeatherRes.current.temp_c)°C  Feels like :: \(WeatherRes.current.feelslike_c)°C"
                     self.setupMap()
                     self.addAnnotation(location: CLLocation(latitude: WeatherRes.location.lat, longitude: WeatherRes.location.lon))
+                    let item = weatherList(title: "\(WeatherRes.location.name), \(WeatherRes.location.region)", subtitle: "\(WeatherRes.current.temp_c),\(WeatherRes.forecast.forecastday)")
+                    if (WeatherRes.location.name != ""){
+                        self.list.append(item)
+                        self.tableView.reloadData()
+                    }
                 }
             }
         }
         dataTask.resume()
     }
    private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/current.json?key=ee31407e0be240f7b94130719221811&q=\(query)&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=ee31407e0be240f7b94130719221811&q=\(query)&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)
@@ -146,9 +176,24 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     struct weatherResponse: Decodable{
         let location: Location
         let current: Currunt
+        let forecast: Forecast
     }
+    struct Forecast: Codable{
+        let forecastday: [Forecastday]
+    }
+    struct Forecastday: Codable {
+        let date: String
+        let day: Day
+    }
+    struct Day: Codable{
+        let maxtemp_c: Float
+        let mintemp_c: Float
+    }
+    
+    
     struct Location: Decodable{
         let name: String
+        let region: String
         let lat: Double
         let lon: Double
     }
@@ -161,6 +206,10 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     struct Condition: Decodable{
         let text: String
         let code: Int
+    }
+    struct weatherList {
+        let title: String
+        let subtitle: String
     }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last{
