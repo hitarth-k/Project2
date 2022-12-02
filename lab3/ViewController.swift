@@ -151,7 +151,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                 print(WeatherRes.location.name)
                 print(WeatherRes.current.temp_c)
                 DispatchQueue.main.async {
-                    self.loc = "\(WeatherRes.location.name)"
+                    self.loc = "\(WeatherRes.location.name),\(WeatherRes.location.region)"
                     self.temp = WeatherRes.current.temp_c
                     self.lat = WeatherRes.location.lat
                     self.long = WeatherRes.location.lon

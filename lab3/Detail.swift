@@ -9,15 +9,6 @@ import UIKit
 import CoreLocation
 
 class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource{
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "forcastCell", for: indexPath)
-        return cell
-    }
-    
     @IBOutlet var location: UILabel!
     @IBOutlet var temp: UILabel!
     @IBOutlet var condition: UILabel!
@@ -27,11 +18,12 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
     
     let locationManager = CLLocationManager()
     var loc = ""
+    var list: [forcastList] = []
+    var locations = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
         loadWeather(search: loc)
-        location.text = loc
         tableView.dataSource = self
         print(getDayOfWeekString(today:"2022-12-03") ?? "")
         // Do any additional setup after loading the view.
@@ -67,6 +59,20 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
         }
     }
 
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return list.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "forcastCell", for: indexPath)
+        let item = list[indexPath.row]
+        var content = cell.defaultContentConfiguration()
+        content.text = item.day
+        content.secondaryText = "\(item.high) \(item.low)"
+        content.prefersSideBySideTextAndSecondaryText = true
+        cell.contentConfiguration = content
+        return cell
+    }
     
     private func loadWeather(search: String?){
         guard let search = search else{
@@ -91,17 +97,23 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
                 print(WeatherRes.location.name)
                 print(WeatherRes.current.temp_c)
                 DispatchQueue.main.async {
+                    self.location.text = WeatherRes.location.name
                     self.temp.text = "\(WeatherRes.current.temp_c)°"
                     self.condition.text = WeatherRes.current.condition.text
                     self.high.text = "H: \(WeatherRes.forecast.forecastday[0].day.maxtemp_c)°"
                     self.low.text = "L: \(WeatherRes.forecast.forecastday[0].day.mintemp_c)°"
+                    for i in 1...9{
+                        let item = forcastList(day: self.getDayOfWeekString(today: "\(WeatherRes.forecast.forecastday[i].date)")!, high: "H: \(WeatherRes.forecast.forecastday[i].day.maxtemp_c)°", low: "L: \(WeatherRes.forecast.forecastday[i].day.mintemp_c)°")
+                        self.list.append(item)
+                        self.tableView.reloadData()
+                    }
                 }
             }
         }
         dataTask.resume()
     }
    private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=ee31407e0be240f7b94130719221811&q=\(query)&days=8&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=ee31407e0be240f7b94130719221811&q=\(query)&days=10&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)
