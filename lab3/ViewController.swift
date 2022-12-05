@@ -26,7 +26,8 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     var temp: Float = 0
     var list: [weatherList] = []
     var loc = ""
-    
+    var code = 0
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -55,8 +56,8 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.load(search: "\(self.list[indexPath.row].title),\(self.list[indexPath.row].subtitle)")
         tableView.deselectRow(at: indexPath, animated: true)
-        
     }
+
     func addImage(code: Int)->UIImage{
         switch code {
         case 1066:
@@ -93,6 +94,10 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
             return UIImage(systemName: "cloud.circle")!
         case 1006:
             return UIImage(systemName: "cloud.circle")!
+        case 1009:
+            return UIImage(systemName: "cloud.circle")!
+        case 1135:
+            return UIImage(systemName: "cloud.fog.fill")!
             
         default:
             return UIImage(systemName: "cloud.sun.rain.fill")!
@@ -108,6 +113,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         let zoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 50000)
         mapView.setCameraZoomRange(zoomRange ,animated: true)
     }
+    
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         let identifier = "WIT"
         let view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
@@ -116,6 +122,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         let button = UIButton(type: .detailDisclosure)
         button.tag = 10
         view.rightCalloutAccessoryView = button
+        view.leftCalloutAccessoryView = UIImageView(image: addImage(code: code))
         view.glyphText = "\(temp)"
         if(temp < 0){
             view.markerTintColor = UIColor.purple
@@ -155,10 +162,10 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     }
     
     func addAnnotation(location: CLLocation){
-        let annotation = MyAnnotation(coordinate: location.coordinate, title: weatherCondition, subtitle: desc)
+        let annotation = MyAnnotation(coordinate: location.coordinate, title: weatherCondition, subtitle: desc )
         mapView.addAnnotation(annotation)
     }
-    
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.endEditing(true)
         loadWeather(search: searchTextField.text)
@@ -200,6 +207,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                     self.temp = WeatherRes.current.temp_c
                     self.lat = WeatherRes.location.lat
                     self.long = WeatherRes.location.lon
+                    self.code = WeatherRes.current.condition.code
                     self.weatherCondition = WeatherRes.current.condition.text
                     self.desc = "Tempreture :: \(WeatherRes.current.temp_c)°C  Feels like :: \(WeatherRes.current.feelslike_c)°C"
                     self.setupMap()
@@ -238,6 +246,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                     self.long = WeatherRes.location.lon
                     self.weatherCondition = WeatherRes.current.condition.text
                     self.desc = "Tempreture :: \(WeatherRes.current.temp_c)°C  Feels like :: \(WeatherRes.current.feelslike_c)°C"
+                    self.code = WeatherRes.current.condition.code
                     self.setupMap()
                     self.addAnnotation(location: CLLocation(latitude: WeatherRes.location.lat, longitude: WeatherRes.location.lon))
                     let item = weatherList(title: "\(WeatherRes.location.name), \(WeatherRes.location.region)", subtitle: "Currunt:: \(WeatherRes.current.temp_c)(H:: \(WeatherRes.forecast.forecastday[0].day.maxtemp_c), L: \(WeatherRes.forecast.forecastday[0].day.mintemp_c))", code: self.addImage(code: WeatherRes.current.condition.code))
@@ -320,10 +329,12 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         var coordinate: CLLocationCoordinate2D
         var title: String?
         var subtitle: String?
+        var image: UIImage?
         init(coordinate: CLLocationCoordinate2D, title: String, subtitle: String) {
             self.coordinate = coordinate
             self.title = title
             self.subtitle = subtitle
+            self.image = UIImage(systemName: "cloud.sun.rain.fill")!
             super.init()
         }
     }

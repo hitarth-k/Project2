@@ -145,8 +145,8 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uaM-Oe-l9n">
-                                <rect key="frame" x="-1" y="772" width="394" height="44"/>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uaM-Oe-l9n">
+                                <rect key="frame" x="-1" y="771" width="394" height="45"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="qhb-aD-xRZ"/>
@@ -191,7 +191,6 @@
         <!--Add List-->
         <scene sceneID="MSZ-Xv-M02">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vMS-Yg-h1P" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <viewController id="DB3-G1-kCC" customClass="AddList" customModule="lab3" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ofb-Z2-bau">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="783"/>
@@ -276,6 +275,23 @@
                                     </button>
                                 </subviews>
                             </stackView>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hjw-Fo-9aN">
+                                <rect key="frame" x="0.0" y="59" width="393" height="56"/>
+                                <items>
+                                    <navigationItem title="Search Screen" id="XSz-wL-QME">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Gtm-GM-d9j">
+                                            <connections>
+                                                <action selector="cancel:" destination="DB3-G1-kCC" id="VMn-cx-xWa"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" style="plain" systemItem="save" id="obO-qw-2U7">
+                                            <connections>
+                                                <action selector="save:" destination="DB3-G1-kCC" id="x8c-IF-zUJ"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="o2O-ge-dvB"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -283,9 +299,12 @@
                             <constraint firstItem="CKK-JE-W25" firstAttribute="leading" secondItem="o2O-ge-dvB" secondAttribute="leading" constant="76.5" id="7ej-nP-aAK"/>
                             <constraint firstItem="KF2-K4-Ypd" firstAttribute="top" secondItem="o2O-ge-dvB" secondAttribute="top" constant="90" id="A5c-Kf-VV5"/>
                             <constraint firstItem="KF2-K4-Ypd" firstAttribute="leading" secondItem="o2O-ge-dvB" secondAttribute="leading" constant="5" id="IPy-vf-7FV"/>
+                            <constraint firstItem="hjw-Fo-9aN" firstAttribute="leading" secondItem="o2O-ge-dvB" secondAttribute="leading" id="L53-lu-YNg"/>
                             <constraint firstItem="CKK-JE-W25" firstAttribute="top" secondItem="KF2-K4-Ypd" secondAttribute="bottom" constant="10" id="VYH-U4-b2W"/>
                             <constraint firstItem="o2O-ge-dvB" firstAttribute="trailing" secondItem="CKK-JE-W25" secondAttribute="trailing" constant="76.5" id="Ytd-Er-VPz"/>
+                            <constraint firstItem="KF2-K4-Ypd" firstAttribute="top" secondItem="hjw-Fo-9aN" secondAttribute="bottom" constant="34" id="p6m-EL-ncX"/>
                             <constraint firstItem="o2O-ge-dvB" firstAttribute="trailing" secondItem="KF2-K4-Ypd" secondAttribute="trailing" constant="5" id="qm4-WF-rnk"/>
+                            <constraint firstItem="hjw-Fo-9aN" firstAttribute="trailing" secondItem="o2O-ge-dvB" secondAttribute="trailing" id="qsW-Sd-uma"/>
                             <constraint firstItem="o2O-ge-dvB" firstAttribute="trailing" secondItem="KF2-K4-Ypd" secondAttribute="trailing" constant="5" id="whH-BZ-rhG"/>
                         </constraints>
                     </view>
@@ -298,6 +317,7 @@
                         <outlet property="temp" destination="prT-IY-J1r" id="0pF-wo-lCB"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vMS-Yg-h1P" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="917" y="-27"/>
         </scene>

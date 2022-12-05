@@ -110,6 +110,10 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
             return UIImage(systemName: "cloud.circle")!
         case 1006:
             return UIImage(systemName: "cloud.circle")!
+        case 1009:
+            return UIImage(systemName: "cloud.circle")!
+        case 1135:
+            return UIImage(systemName: "cloud.fog.fill")!
             
         default:
             return UIImage(systemName: "cloud.sun.rain.fill")!
@@ -155,7 +159,7 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
         dataTask.resume()
     }
    private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=d9f35333002e448e9ac134737220512&q=\(query)&days=10&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=32a8ac5757f843b3a8d51651222811&q=\(query)&days=10&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)

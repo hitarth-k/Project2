@@ -18,12 +18,14 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate,
     @IBOutlet var changer: UISegmentedControl!
     @IBOutlet var image: UIImageView!
     @IBOutlet var condition: UILabel!
+    var list: [weatherList] = []
     var celcius = ""
     var faren = ""
     let locationManager = CLLocationManager()
     var long = ""
     var lat = ""
     let first = ViewController()
+    var loc = ""
     
     
     override func viewDidLoad() {
@@ -31,6 +33,9 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate,
         // Do any additional setup after loading the view.
         searchTextField.delegate = self
         locationManager.delegate = self
+        let config = UIImage.SymbolConfiguration(paletteColors: [.blue, .orange])
+        image.preferredSymbolConfiguration = config
+        image.image = UIImage(systemName: "cloud.sun.rain.fill")
         
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -50,6 +55,7 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate,
     
     @IBAction func onSearchTapped(_ sender: UIButton) {
         loadWeather(search: searchTextField.text)
+
     }
     
     @IBAction func curruntLocation(_ sender: UIButton) {
@@ -80,12 +86,13 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate,
                 print(WeatherRes.location.name)
                 print(WeatherRes.current.temp_c)
                 DispatchQueue.main.async {
-                    let config = UIImage.SymbolConfiguration(paletteColors: [.systemBlue, .white])
+                    let config = UIImage.SymbolConfiguration(paletteColors: [.blue, .orange])
                     self.image.preferredSymbolConfiguration = config
                     self.celcius = "\(WeatherRes.current.temp_c)°C"
                     self.faren = "\(WeatherRes.current.temp_f)°F"
                     self.locationLable.text = WeatherRes.location.name
                     self.condition.text = WeatherRes.current.condition.text
+                    self.loc = "\(WeatherRes.location.name),\(WeatherRes.location.region)"
                     if (self.changer.selectedSegmentIndex == 0){
                         self.temp.text = "\(WeatherRes.current.temp_c)°C"
                     }
@@ -110,13 +117,28 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate,
                     else{
                         self.image.image = UIImage(systemName: "cloud.sun.rain.fill")
                     }
+                    let item = ViewController.weatherList(title: "\(WeatherRes.location.name), \(WeatherRes.location.region)", subtitle: "Currunt:: \(WeatherRes.current.temp_c)(H:: \(WeatherRes.forecast.forecastday[0].day.maxtemp_c), L: \(WeatherRes.forecast.forecastday[0].day.mintemp_c))", code: self.first.addImage(code: WeatherRes.current.condition.code))
+                    if (WeatherRes.location.name != ""){
+                        self.first.list.append(item)
+                    }
                 }
             }
         }
         dataTask.resume()
     }
-   private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/current.json?key=32a8ac5757f843b3a8d51651222811&q=\(query)&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+    
+    @IBAction func save(_ sender: UIBarButtonItem) {
+        if let delegate = self.presentingViewController as? ViewController {
+            delegate.loadWeather(search: locationLable.text)
+                }
+        dismiss(animated: true)
+    }
+    
+    @IBAction func cancel(_ sender: UIBarButtonItem) {
+        dismiss(animated: true)
+    }
+    private func getURL(query: String) -> URL?{
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=32a8ac5757f843b3a8d51651222811&q=\(query)&days=7&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)
@@ -134,18 +156,39 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate,
     struct weatherResponse: Decodable{
         let location: Location
         let current: Currunt
+        let forecast: Forecast
+    }
+    struct Forecast: Codable{
+        let forecastday: [Forecastday]
+    }
+    struct Forecastday: Codable {
+        let date: String
+        let day: Day
+    }
+    struct Day: Codable{
+        let maxtemp_c: Float
+        let mintemp_c: Float
     }
     struct Location: Decodable{
         let name: String
+        let region: String
+        let lat: Double
+        let lon: Double
     }
     struct Currunt: Decodable{
         let temp_c: Float
         let temp_f: Float
+        let feelslike_c: Float
         let condition: Condition
     }
     struct Condition: Decodable{
         let text: String
         let code: Int
+    }
+    struct weatherList {
+        let title: String
+        let subtitle: String
+        let code: UIImage
     }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last{
