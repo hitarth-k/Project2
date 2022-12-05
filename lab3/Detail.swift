@@ -69,9 +69,51 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
         var content = cell.defaultContentConfiguration()
         content.text = item.day
         content.secondaryText = "\(item.high) \(item.low)"
+        content.image = item.code
         content.prefersSideBySideTextAndSecondaryText = true
         cell.contentConfiguration = content
         return cell
+    }
+    func addImage(code: Int)->UIImage{
+        switch code {
+        case 1066:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1014:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1213:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1210:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1216:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1219:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1225:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1000:
+            return UIImage(systemName: "sun.max.circle.fill")!
+        case 1192:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1195:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1198:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1201:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1240:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1243:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1183:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1003:
+            return UIImage(systemName: "cloud.circle")!
+        case 1006:
+            return UIImage(systemName: "cloud.circle")!
+            
+        default:
+            return UIImage(systemName: "cloud.sun.rain.fill")!
+        }
     }
     
     private func loadWeather(search: String?){
@@ -103,7 +145,7 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
                     self.high.text = "H: \(WeatherRes.forecast.forecastday[0].day.maxtemp_c)°"
                     self.low.text = "L: \(WeatherRes.forecast.forecastday[0].day.mintemp_c)°"
                     for i in 1...9{
-                        let item = forcastList(day: self.getDayOfWeekString(today: "\(WeatherRes.forecast.forecastday[i].date)")!, high: "H: \(WeatherRes.forecast.forecastday[i].day.maxtemp_c)°", low: "L: \(WeatherRes.forecast.forecastday[i].day.mintemp_c)°")
+                        let item = forcastList(day: self.getDayOfWeekString(today: "\(WeatherRes.forecast.forecastday[i].date)")!, high: "H: \(WeatherRes.forecast.forecastday[i].day.maxtemp_c)°", low: "L: \(WeatherRes.forecast.forecastday[i].day.mintemp_c)°", code: self.addImage(code: WeatherRes.forecast.forecastday[i].day.condition.code))
                         self.list.append(item)
                         self.tableView.reloadData()
                     }
@@ -113,7 +155,7 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
         dataTask.resume()
     }
    private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=ee31407e0be240f7b94130719221811&q=\(query)&days=10&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=d9f35333002e448e9ac134737220512&q=\(query)&days=10&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)
@@ -143,6 +185,10 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
     struct Day: Codable{
         let maxtemp_c: Float
         let mintemp_c: Float
+        let condition: Cond
+    }
+    struct Cond: Codable{
+        let code: Int
     }
     
     
@@ -166,6 +212,7 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
         let day: String
         let high: String
         let low: String
+        let code: UIImage
     }
 
     /*

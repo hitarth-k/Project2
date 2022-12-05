@@ -7,8 +7,10 @@
 
 import UIKit
 import CoreLocation
+import MapKit
 
-class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
+
+class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, MKMapViewDelegate{
 
     @IBOutlet var temp: UILabel!
     @IBOutlet var searchTextField: UITextField!
@@ -21,12 +23,15 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate 
     let locationManager = CLLocationManager()
     var long = ""
     var lat = ""
+    let first = ViewController()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         searchTextField.delegate = self
         locationManager.delegate = self
+        
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.endEditing(true)
@@ -111,7 +116,7 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate 
         dataTask.resume()
     }
    private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/current.json?key=ee31407e0be240f7b94130719221811&q=\(query)&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/current.json?key=32a8ac5757f843b3a8d51651222811&q=\(query)&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)

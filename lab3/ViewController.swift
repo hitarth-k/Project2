@@ -9,7 +9,7 @@ import UIKit
 import CoreLocation
 import MapKit
 
-class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, MKMapViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, MKMapViewDelegate, UITableViewDataSource, UITableViewDelegate {
 
     
 
@@ -36,6 +36,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         locationManager.requestLocation()
         addAnnotation(location: CLLocation(latitude: lat, longitude: long))
         tableView.dataSource = self
+        tableView.delegate = self
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return list.count
@@ -47,8 +48,55 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         var content = cell.defaultContentConfiguration()
         content.text = item.title
         content.secondaryText = item.subtitle
+        content.image = item.code
         cell.contentConfiguration = content
         return cell
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.load(search: "\(self.list[indexPath.row].title),\(self.list[indexPath.row].subtitle)")
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+    }
+    func addImage(code: Int)->UIImage{
+        switch code {
+        case 1066:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1014:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1213:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1210:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1216:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1219:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1225:
+            return UIImage(systemName: "snowflake.circle.fill")!
+        case 1000:
+            return UIImage(systemName: "sun.max.circle.fill")!
+        case 1192:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1195:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1198:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1201:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1240:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1243:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1183:
+            return UIImage(systemName: "cloud.rain.fill")!
+        case 1003:
+            return UIImage(systemName: "cloud.circle")!
+        case 1006:
+            return UIImage(systemName: "cloud.circle")!
+            
+        default:
+            return UIImage(systemName: "cloud.sun.rain.fill")!
+        }
     }
     
     func setupMap() {
@@ -57,8 +105,6 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         let radiusInMeters: CLLocationDistance = 10000
         let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: radiusInMeters, longitudinalMeters: radiusInMeters)
         mapView.setRegion(region, animated: true)
-        let boundry = MKMapView.CameraBoundary(coordinateRegion: region)
-        mapView.setCameraBoundary(boundry, animated: true)
         let zoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 50000)
         mapView.setCameraZoomRange(zoomRange ,animated: true)
     }
@@ -94,18 +140,21 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
        //Open Detais screen (use the psudo code from notes)
-        performSegue(withIdentifier: "goToDetail", sender: self)
+        if(control.tag == 10){
+            performSegue(withIdentifier: "goToDetail", sender: self)
+        }
+        else{
+            return
+        }
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToDetail" {
             guard let vc = segue.destination as? Detail else {return}
-//            vc.test.text = weatherConditio
             vc.loc = loc
         }
     }
     
     func addAnnotation(location: CLLocation){
-        let coordinate2D = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         let annotation = MyAnnotation(coordinate: location.coordinate, title: weatherCondition, subtitle: desc)
         mapView.addAnnotation(annotation)
     }
@@ -116,10 +165,6 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         return true
     }
     
-    @IBAction func addList(_ sender: UIBarButtonItem) {
-        
-    }
-    
     @IBAction func onSearchTapped(_ sender: UIButton) {
         loadWeather(search: searchTextField.text)
     }
@@ -128,7 +173,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
     }
-    private func loadWeather(search: String?){
+    func load(search: String?){
         guard let search = search else{
             return
         }
@@ -159,7 +204,43 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                     self.desc = "Tempreture :: \(WeatherRes.current.temp_c)°C  Feels like :: \(WeatherRes.current.feelslike_c)°C"
                     self.setupMap()
                     self.addAnnotation(location: CLLocation(latitude: WeatherRes.location.lat, longitude: WeatherRes.location.lon))
-                    let item = weatherList(title: "\(WeatherRes.location.name), \(WeatherRes.location.region)", subtitle: "Currunt:: \(WeatherRes.current.temp_c)(H:: \(WeatherRes.forecast.forecastday[0].day.maxtemp_c), L: \(WeatherRes.forecast.forecastday[0].day.mintemp_c))")
+                }
+            }
+        }
+        dataTask.resume()
+    }
+    func loadWeather(search: String?){
+        guard let search = search else{
+            return
+        }
+        guard let url = getURL(query: search) else {
+            print("Unable to get URL")
+            return
+        }
+        let session = URLSession.shared
+        let dataTask = session.dataTask(with: url) {data, respose, error in
+            print("Network Call is completed")
+            guard error == nil else {
+                print("error")
+                return
+            }
+            guard let data = data else {
+                print("No data found")
+                return
+            }
+            if let WeatherRes = self.parseJson(data: data){
+                print(WeatherRes.location.name)
+                print(WeatherRes.current.temp_c)
+                DispatchQueue.main.async {
+                    self.loc = "\(WeatherRes.location.name),\(WeatherRes.location.region)"
+                    self.temp = WeatherRes.current.temp_c
+                    self.lat = WeatherRes.location.lat
+                    self.long = WeatherRes.location.lon
+                    self.weatherCondition = WeatherRes.current.condition.text
+                    self.desc = "Tempreture :: \(WeatherRes.current.temp_c)°C  Feels like :: \(WeatherRes.current.feelslike_c)°C"
+                    self.setupMap()
+                    self.addAnnotation(location: CLLocation(latitude: WeatherRes.location.lat, longitude: WeatherRes.location.lon))
+                    let item = weatherList(title: "\(WeatherRes.location.name), \(WeatherRes.location.region)", subtitle: "Currunt:: \(WeatherRes.current.temp_c)(H:: \(WeatherRes.forecast.forecastday[0].day.maxtemp_c), L: \(WeatherRes.forecast.forecastday[0].day.mintemp_c))", code: self.addImage(code: WeatherRes.current.condition.code))
                     if (WeatherRes.location.name != ""){
                         self.list.append(item)
                         self.tableView.reloadData()
@@ -170,7 +251,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         dataTask.resume()
     }
    private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=ee31407e0be240f7b94130719221811&q=\(query)&days=7&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=32a8ac5757f843b3a8d51651222811&q=\(query)&days=7&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)
@@ -201,8 +282,6 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         let maxtemp_c: Float
         let mintemp_c: Float
     }
-    
-    
     struct Location: Decodable{
         let name: String
         let region: String
@@ -222,13 +301,14 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     struct weatherList {
         let title: String
         let subtitle: String
+        let code: UIImage
     }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last{
             let coordinates = "\(location.coordinate.latitude),\(location.coordinate.longitude)"
             lat = location.coordinate.latitude
             long = location.coordinate.longitude
-            loadWeather(search: coordinates)
+            load(search: coordinates)
             setupMap()
         }
     }
