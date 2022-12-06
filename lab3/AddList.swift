@@ -36,6 +36,8 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate,
         let config = UIImage.SymbolConfiguration(paletteColors: [.blue, .orange])
         image.preferredSymbolConfiguration = config
         image.image = UIImage(systemName: "cloud.sun.rain.fill")
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
         
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
