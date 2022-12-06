@@ -129,7 +129,7 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate,
     
     @IBAction func save(_ sender: UIBarButtonItem) {
         if let delegate = self.presentingViewController as? ViewController {
-            delegate.loadWeather(search: locationLable.text)
+            delegate.loadWeather(search: loc)
                 }
         dismiss(animated: true)
     }

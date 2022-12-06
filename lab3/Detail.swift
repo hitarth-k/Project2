@@ -120,6 +120,10 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
         }
     }
     
+    @IBAction func done(_ sender: UIBarButtonItem) {
+        dismiss(animated: true)
+    }
+    
     private func loadWeather(search: String?){
         guard let search = search else{
             return

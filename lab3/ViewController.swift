@@ -11,11 +11,7 @@ import MapKit
 
 class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate, MKMapViewDelegate, UITableViewDataSource, UITableViewDelegate {
 
-    
-
-    @IBOutlet var searchTextField: UITextField!
     @IBOutlet var mapView: MKMapView!
-    @IBOutlet var searchStack: UIStackView!
     @IBOutlet var tableView: UITableView!
     
     let locationManager = CLLocationManager()
@@ -31,7 +27,6 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        searchTextField.delegate = self
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
@@ -164,21 +159,6 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     func addAnnotation(location: CLLocation){
         let annotation = MyAnnotation(coordinate: location.coordinate, title: weatherCondition, subtitle: desc )
         mapView.addAnnotation(annotation)
-    }
-
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.endEditing(true)
-        loadWeather(search: searchTextField.text)
-        return true
-    }
-    
-    @IBAction func onSearchTapped(_ sender: UIButton) {
-        loadWeather(search: searchTextField.text)
-    }
-    
-    @IBAction func curruntLocation(_ sender: UIButton) {
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
     }
     func load(search: String?){
         guard let search = search else{
