@@ -23,13 +23,16 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     var list: [weatherList] = []
     var loc = ""
     var code = 0
+    private var path: String = "MyWeatherList.plist"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        loadItem()
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
+        locationManager.startUpdatingLocation()
         addAnnotation(location: CLLocation(latitude: lat, longitude: long))
         tableView.dataSource = self
         tableView.delegate = self
@@ -44,7 +47,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         var content = cell.defaultContentConfiguration()
         content.text = item.title
         content.secondaryText = item.subtitle
-        content.image = item.code
+        content.image = UIImage(systemName: item.code)
         cell.contentConfiguration = content
         return cell
     }
@@ -52,50 +55,84 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         self.load(search: "\(self.list[indexPath.row].title),\(self.list[indexPath.row].subtitle)")
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    private func saveList(item: weatherList){
+        let userDocuments = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        guard let weatherListPath = userDocuments.first?.appendingPathComponent(path) else {
+            return
+        }
+        list.append(item)
+        let encoder = PropertyListEncoder()
+        do{
+            let data = try encoder.encode(list)
+            try data.write(to: weatherListPath)
+        }
+        catch{
+            print(error)
+        }
 
-    func addImage(code: Int)->UIImage{
+        self.tableView.reloadData()
+    }
+    
+    private func loadItem(){
+        let userDocuments = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        guard let weatherListPath = userDocuments.first?.appendingPathComponent(path) else {
+            return
+        }
+        let decoder = PropertyListDecoder()
+        do{
+            let data = try Data(contentsOf: weatherListPath)
+            let decodedData = try decoder.decode([weatherList].self, from: data)
+            list = decodedData
+            tableView.reloadData()
+        }catch{
+            print(error)
+        }
+    }
+
+    func addImage(code: Int)->String{
         switch code {
         case 1066:
-            return UIImage(systemName: "snowflake.circle.fill")!
+            return  "snowflake.circle.fill"
         case 1014:
-            return UIImage(systemName: "snowflake.circle.fill")!
+            return "snowflake.circle.fill"
         case 1213:
-            return UIImage(systemName: "snowflake.circle.fill")!
+            return "snowflake.circle.fill"
         case 1210:
-            return UIImage(systemName: "snowflake.circle.fill")!
+            return "snowflake.circle.fill"
         case 1216:
-            return UIImage(systemName: "snowflake.circle.fill")!
+            return "snowflake.circle.fill"
         case 1219:
-            return UIImage(systemName: "snowflake.circle.fill")!
+            return "snowflake.circle.fill"
         case 1225:
-            return UIImage(systemName: "snowflake.circle.fill")!
+            return "snowflake.circle.fill"
         case 1000:
-            return UIImage(systemName: "sun.max.circle.fill")!
+            return  "sun.max.circle.fill"
         case 1192:
-            return UIImage(systemName: "cloud.rain.fill")!
+            return "cloud.rain.fill"
         case 1195:
-            return UIImage(systemName: "cloud.rain.fill")!
+            return "cloud.rain.fill"
         case 1198:
-            return UIImage(systemName: "cloud.rain.fill")!
+            return "cloud.rain.fill"
         case 1201:
-            return UIImage(systemName: "cloud.rain.fill")!
+            return "cloud.rain.fill"
         case 1240:
-            return UIImage(systemName: "cloud.rain.fill")!
+            return "cloud.rain.fill"
         case 1243:
-            return UIImage(systemName: "cloud.rain.fill")!
+            return "cloud.rain.fill"
         case 1183:
-            return UIImage(systemName: "cloud.rain.fill")!
+            return "cloud.rain.fill"
         case 1003:
-            return UIImage(systemName: "cloud.circle")!
+            return  "cloud.circle"
         case 1006:
-            return UIImage(systemName: "cloud.circle")!
+            return "cloud.circle"
         case 1009:
-            return UIImage(systemName: "cloud.circle")!
+            return "cloud.circle"
         case 1135:
-            return UIImage(systemName: "cloud.fog.fill")!
+            return  "cloud.fog.fill"
             
         default:
-            return UIImage(systemName: "cloud.sun.rain.fill")!
+            return "cloud.sun.rain.fill"
         }
     }
     
@@ -117,7 +154,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         let button = UIButton(type: .detailDisclosure)
         button.tag = 10
         view.rightCalloutAccessoryView = button
-        view.leftCalloutAccessoryView = UIImageView(image: addImage(code: code))
+        view.leftCalloutAccessoryView = UIImageView(image: UIImage(systemName: addImage(code: code)) )
         view.glyphText = "\(temp)"
         if(temp < 0){
             view.markerTintColor = UIColor.purple
@@ -231,8 +268,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                     self.addAnnotation(location: CLLocation(latitude: WeatherRes.location.lat, longitude: WeatherRes.location.lon))
                     let item = weatherList(title: "\(WeatherRes.location.name), \(WeatherRes.location.region)", subtitle: "Currunt:: \(WeatherRes.current.temp_c)(H:: \(WeatherRes.forecast.forecastday[0].day.maxtemp_c), L: \(WeatherRes.forecast.forecastday[0].day.mintemp_c))", code: self.addImage(code: WeatherRes.current.condition.code))
                     if (WeatherRes.location.name != ""){
-                        self.list.append(item)
-                        self.tableView.reloadData()
+                        self.saveList(item: item)
                     }
                 }
             }
@@ -240,7 +276,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         dataTask.resume()
     }
    private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=32a8ac5757f843b3a8d51651222811&q=\(query)&days=7&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=fd155cb758c542dcbf923615221612&q=\(query)&days=7&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)
@@ -287,10 +323,10 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         let text: String
         let code: Int
     }
-    struct weatherList {
+    struct weatherList: Codable{
         let title: String
         let subtitle: String
-        let code: UIImage
+        let code: String
     }
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last{

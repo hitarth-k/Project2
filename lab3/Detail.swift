@@ -152,7 +152,7 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
                     self.condition.text = WeatherRes.current.condition.text
                     self.high.text = "H: \(WeatherRes.forecast.forecastday[0].day.maxtemp_c)°"
                     self.low.text = "L: \(WeatherRes.forecast.forecastday[0].day.mintemp_c)°"
-                    for i in 1...9{
+                    for i in 1...2{
                         let item = forcastList(day: self.getDayOfWeekString(today: "\(WeatherRes.forecast.forecastday[i].date)")!, high: "H: \(WeatherRes.forecast.forecastday[i].day.maxtemp_c)°", low: "L: \(WeatherRes.forecast.forecastday[i].day.mintemp_c)°", code: self.addImage(code: WeatherRes.forecast.forecastday[i].day.condition.code))
                         self.list.append(item)
                         self.tableView.reloadData()
@@ -163,7 +163,7 @@ class Detail: UIViewController, CLLocationManagerDelegate, UITableViewDataSource
         dataTask.resume()
     }
    private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=32a8ac5757f843b3a8d51651222811&q=\(query)&days=10&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=fd155cb758c542dcbf923615221612&q=\(query)&days=10&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)

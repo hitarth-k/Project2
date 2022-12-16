@@ -140,7 +140,7 @@ class AddList: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate,
         dismiss(animated: true)
     }
     private func getURL(query: String) -> URL?{
-       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=32a8ac5757f843b3a8d51651222811&q=\(query)&days=7&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+       guard let url = "https://api.weatherapi.com/v1/forecast.json?key=fd155cb758c542dcbf923615221612&q=\(query)&days=7&aqi=no".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
            return nil
        }
         return URL(string: url)
